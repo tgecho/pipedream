@@ -11,7 +11,7 @@ def test_exceptions_without_handler(dispatcher):
         1/0
 
     with pytest.raises(ZeroDivisionError):
-        dispatcher.call('a')
+        assert dispatcher.call('a')
 
 
 def test_handled_exceptions(dispatcher):
