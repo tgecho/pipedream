@@ -35,6 +35,22 @@ def test_decorating_attached_requirements(dispatcher):
     assert list(dispatcher.find_resource('a').requirements) == ['b']
 
 
+def test_decorating_custom_name(dispatcher):
+    @dispatcher.add('foo')
+    def bar():
+        pass  # pragma: no cover
+    assert dispatcher.find_resource('foo')
+    with pytest.raises(UnresolvableDependency):
+        assert not dispatcher.find_resource('bar')
+
+    @dispatcher.add(name='fro')
+    def frum():
+        pass  # pragma: no cover
+    assert dispatcher.find_resource('fro')
+    with pytest.raises(UnresolvableDependency):
+        assert not dispatcher.find_resource('frum')
+
+
 def test_decorating_duplicate(dispatcher):
     @dispatcher.add
     def a():

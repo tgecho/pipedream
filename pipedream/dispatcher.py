@@ -47,7 +47,8 @@ class Dispatcher(object):
         def my_func(var):
             return var
         """
-        if func is None:
+        if func is None or isinstance(func, basestring):
+            kwargs.setdefault('name', func)
             def decorater(func):
                 self.add_resource(func, **kwargs)
                 return func
@@ -56,10 +57,10 @@ class Dispatcher(object):
             self.add_resource(func, **kwargs)
             return func
 
-    def add_resource(self, func, requires=None):
+    def add_resource(self, func, name=None, requires=None):
         requirements = requires or getattr(func, 'requires', None) or func_kwargs(func)
         assert isinstance(requirements, (list, tuple))
-        name = func.__name__
+        name = name or func.__name__
         if name in self._resources:
             raise DuplicateFunction(name)
         self._resources[name] = Resource(func, requirements)
