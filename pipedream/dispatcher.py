@@ -140,10 +140,9 @@ class Dispatcher(object):
             return func(*args, **kwargs)
         except Exception, ex:
             for handler in self._error_handlers:
-                if handler:
-                    result = handler(ex)
-                    if not isinstance(result, Exception):
-                        return result
+                result = handler(ex)
+                if not isinstance(result, Exception):
+                    return result
             raise
 
     def error_handler(self, func):
