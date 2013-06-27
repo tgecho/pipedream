@@ -11,10 +11,11 @@ Resource = namedtuple('Resource', ['function', 'requirements', 'scope'])
 class Dispatcher(object):
     scope_cache = {}
 
-    def __init__(self):
+    def __init__(self, async_pool=None):
         self._sub_dispatchers = []
         self._resources = {}
         self._error_handlers = []
+        self.async_pool = async_pool
 
     def wrap(self, *args, **kwargs):
         """
@@ -137,16 +138,22 @@ class Dispatcher(object):
 
             call_args = (kwargs[kw] for kw in item.requirements)
 
-            kwargs[dep] = self.call_func(item, call_args)
+            kwargs[dep] = self.call_func(item.function, call_args)
 
             if item.scope:
                 self.scope_cache_set(dep, kwargs[item.scope], kwargs[dep])
 
         return kwargs
 
-    def call_func(self, func, call_kwargs):
+    def call_func(self, func, call_args):
+        if self.async_pool:
+            return self.async_pool.do(self.handle_errors, func, *call_args)
+        else:
+            return self.handle_errors(func, *call_args)
+
+    def handle_errors(self, func, *args, **kwargs):
         try:
-            return func.function(*call_kwargs)
+            return func(*args, **kwargs)
         except Exception, ex:
             for handler in self._error_handlers:
                 if handler:
