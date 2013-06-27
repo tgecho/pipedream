@@ -3,7 +3,7 @@ from pipedream import Dispatcher
 
 
 @pytest.fixture
-def dispatcher():
+def dispatcher(pool_or_none):
     return Dispatcher()
 
 
@@ -22,6 +22,14 @@ def import_backend(name):
 def pool(request):
     return import_backend(request.param)(1)
 
+
+@pytest.fixture(scope='session', params=ASYNC_BACKENDS + (None,))
+def pool_or_none(request):
+    # Simply allows us to try all of the pools but also allow no pool.
+    if request.param:
+        return import_backend(request.param)(1)
+    else:
+        return None
 
 
 @pytest.fixture(params=[(a, b) for a in ASYNC_BACKENDS for b in ASYNC_BACKENDS])
