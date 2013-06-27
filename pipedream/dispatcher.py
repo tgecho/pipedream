@@ -1,16 +1,13 @@
-from weakref import WeakKeyDictionary
 from collections import OrderedDict, namedtuple
 
 from pipedream.exceptions import UnresolvableDependency, CircularDependency, ResourceError, DuplicateFunction
 from pipedream.utils import func_kwargs, preserve_signature
 
 
-Resource = namedtuple('Resource', ['function', 'requirements', 'scope'])
+Resource = namedtuple('Resource', ['function', 'requirements'])
 
 
 class Dispatcher(object):
-    scope_cache = {}
-
     def __init__(self, async_pool=None):
         self._sub_dispatchers = []
         self._resources = {}
@@ -59,13 +56,13 @@ class Dispatcher(object):
             self.add_resource(func, **kwargs)
             return func
 
-    def add_resource(self, func, requires=None, scope=None):
+    def add_resource(self, func, requires=None):
         requirements = requires or getattr(func, 'requires', None) or func_kwargs(func)
         assert isinstance(requirements, (list, tuple))
         name = func.__name__
         if name in self._resources:
             raise DuplicateFunction(name)
-        self._resources[name] = Resource(func, requirements, scope)
+        self._resources[name] = Resource(func, requirements)
         return name
 
     def add_sub_dispatcher(self, resource):
@@ -126,22 +123,9 @@ class Dispatcher(object):
                 continue
             item = graph[dep]
 
-            if item.scope:
-                if item.scope not in kwargs:
-                    missing = self.resolve_dependency_graph(item.scope, resolved=kwargs.keys())
-                    self.call_funcs(missing, kwargs)
-
-                cached = self.scope_cache_get(dep, kwargs[item.scope])
-                if cached:
-                    kwargs[dep] = cached
-                    continue
-
             call_args = (kwargs[kw] for kw in item.requirements)
 
             kwargs[dep] = self.call_func(item.function, call_args)
-
-            if item.scope:
-                self.scope_cache_set(dep, kwargs[item.scope], kwargs[dep])
 
         return kwargs
 
@@ -164,17 +148,3 @@ class Dispatcher(object):
 
     def error_handler(self, func):
         self._error_handlers.append(func)
-
-    def scope_cache_get(self, name, scope):
-        if name in self.scope_cache:
-            try:
-                return self.scope_cache[name].get(scope)
-            except TypeError, ex:
-                raise ResourceError('Can\'t cache "{}" based on "{}": {}'.format(name, scope, ex))
-        return None
-
-    def scope_cache_set(self, name, scope, value):
-        try:
-            self.scope_cache.setdefault(name, WeakKeyDictionary())[scope] = value
-        except TypeError, ex:
-            raise ResourceError('Can\'t cache "{}" based on "{}": {}'.format(name, scope, ex))
