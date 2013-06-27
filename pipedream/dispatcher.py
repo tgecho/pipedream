@@ -5,7 +5,7 @@ from pipedream.exceptions import UnresolvableDependency, CircularDependency, Res
 from pipedream.utils import func_kwargs, preserve_signature
 
 
-Resource = namedtuple('Resource', ['function', 'requirements', 'scope', 'error_handler'])
+Resource = namedtuple('Resource', ['function', 'requirements', 'scope'])
 
 
 class Dispatcher(object):
@@ -58,13 +58,13 @@ class Dispatcher(object):
             self.add_resource(func, **kwargs)
             return func
 
-    def add_resource(self, func, requires=None, scope=None, error_handler=None):
+    def add_resource(self, func, requires=None, scope=None):
         requirements = requires or getattr(func, 'requires', None) or func_kwargs(func)
         assert isinstance(requirements, (list, tuple))
         name = func.__name__
         if name in self._resources:
             raise DuplicateFunction(name)
-        self._resources[name] = Resource(func, requirements, scope, error_handler)
+        self._resources[name] = Resource(func, requirements, scope)
         return name
 
     def add_sub_dispatcher(self, resource):
@@ -148,7 +148,7 @@ class Dispatcher(object):
         try:
             return func.function(*call_kwargs)
         except Exception, ex:
-            for handler in [func.error_handler] + self._error_handlers:
+            for handler in self._error_handlers:
                 if handler:
                     result = handler(ex)
                     if not isinstance(result, Exception):
