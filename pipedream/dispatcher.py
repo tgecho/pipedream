@@ -167,7 +167,10 @@ class Dispatcher(object):
 
     def scope_cache_get(self, name, scope):
         if name in self.scope_cache:
-            return self.scope_cache[name].get(scope)
+            try:
+                return self.scope_cache[name].get(scope)
+            except TypeError, ex:
+                raise ResourceError('Can\'t cache "{}" based on "{}": {}'.format(name, scope, ex))
         return None
 
     def scope_cache_set(self, name, scope, value):
