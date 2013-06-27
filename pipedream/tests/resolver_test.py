@@ -68,20 +68,6 @@ def test_resolving_unresolvable(dispatcher):
         dispatcher.resolve_dependency_graph('a')
 
 
-def test_calling_basic(dispatcher):
-    @dispatcher.add
-    def a(b):
-        return '(a={})'.format(b)
-
-    @dispatcher.add
-    def b():
-        return 'b'
-
-    assert dispatcher.call('a') == '(a=b)'
-    assert dispatcher.call('b') == 'b'
-    assert dispatcher.call('a', b='b!') == '(a=b!)'
-
-
 def test_deep_resolving():
     one = Dispatcher()
     two = Dispatcher()
