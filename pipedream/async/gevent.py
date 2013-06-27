@@ -1,4 +1,3 @@
-# from peak.util.proxies import get_callback
 from __future__ import absolute_import
 
 import gevent

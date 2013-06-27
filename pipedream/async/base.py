@@ -1,7 +1,4 @@
-import sys
-from traceback import format_tb
 from peak.util.proxies import LazyProxy
-from pipedream.utils import preserve_signature
 
 
 class FutureProxyException(Exception):
