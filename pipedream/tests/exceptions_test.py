@@ -1,7 +1,5 @@
 import pytest
 
-from pipedream import Dispatcher
-
 
 class FooBar(Exception):
     pass
