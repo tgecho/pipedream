@@ -4,7 +4,7 @@ from pipedream import Dispatcher
 
 @pytest.fixture
 def dispatcher(pool_or_none):
-    return Dispatcher()
+    return Dispatcher(async_pool=pool_or_none)
 
 
 ASYNC_BACKENDS = (
