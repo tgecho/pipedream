@@ -7,7 +7,7 @@ if not sys.version_info >= (2, 7):
 
 setup(
     name='pipedream',
-    version='0.1.0-alpha',
+    version='0.1.1-alpha',
     packages=[
         'pipedream',
         'pipedream.async'
