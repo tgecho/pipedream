@@ -1,4 +1,9 @@
-from collections import OrderedDict, namedtuple
+from collections import namedtuple
+
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
 
 from pipedream.exceptions import UnresolvableDependency, CircularDependency, ResourceError, DuplicateFunction
 from pipedream.utils import func_kwargs, preserve_signature

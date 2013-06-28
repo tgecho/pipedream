@@ -1,4 +1,9 @@
+import sys
 from distutils.core import setup
+
+extra = {}
+if not sys.version_info >= (2, 7):
+    extra['install_requires'] = ['ordereddict']
 
 setup(
     name='pipedream',
@@ -21,4 +26,5 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development :: Libraries',
     ],
+    **extra
 )
