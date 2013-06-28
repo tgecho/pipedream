@@ -77,20 +77,22 @@ class Dispatcher(object):
         """
         self._sub_dispatchers.append(resource)
 
-    def find_resource(self, name):
+    def find_resource(self, name, tried=None):
         """
         Find a named resource among available dispatchers.
         """
+        tried = tried or []
+        tried.append(self)
         try:
             return self._resources[name]
         except KeyError:
-            tried = self._resources.keys()
-            for dispatcher in self._sub_dispatchers:
+            available = self._resources.keys()
+            for dispatcher in (d for d in self._sub_dispatchers if d not in tried):
                 try:
-                    return dispatcher.find_resource(name)
+                    return dispatcher.find_resource(name, tried=tried)
                 except UnresolvableDependency, ex:
-                    tried.extend(ex.tried)
-            raise UnresolvableDependency(name, tried=tried)
+                    available.extend(ex.available)
+            raise UnresolvableDependency(name, available=available)
 
     def resolve_dependency_graph(self, name, resolved=None, _unresolved=None):
         """

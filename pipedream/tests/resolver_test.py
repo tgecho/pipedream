@@ -83,7 +83,7 @@ def test_deep_resolving():
 
     with pytest.raises(UnresolvableDependency) as ex:
         one.find_resource('b')
-    assert 'a' in ex.value.tried
+    assert 'a' in ex.value.available
 
 
 def test_circular_dispatchers():
@@ -94,5 +94,5 @@ def test_circular_dispatchers():
     two.add_sub_dispatcher(three)
     three.add_sub_dispatcher(one)
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(UnresolvableDependency):
         one.find_resource('a')
