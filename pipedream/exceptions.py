@@ -15,9 +15,9 @@ class CircularDispatcherDependency(PipedreamException):
 
 
 class UnresolvableDependency(PipedreamException):
-    def __init__(self, name, tried):
-        self.tried = tried
-        super(UnresolvableDependency, self).__init__("Can't find '{}' in {}".format(name, tried))
+    def __init__(self, name, available):
+        self.available = available
+        super(UnresolvableDependency, self).__init__("Can't find '{0}' in {1}".format(name, available))
 
 
 class ResourceError(PipedreamException):

@@ -110,7 +110,7 @@ class Dispatcher(object):
         for dep in result.requirements:
             if dep not in resolved:
                 if dep in _unresolved:
-                    raise CircularDependency('{} > {}'.format(name, dep))
+                    raise CircularDependency('{0} > {1}'.format(name, dep))
                 self.resolve_dependency_graph(dep, resolved, _unresolved)
         resolved[name] = result
         _unresolved.remove(name)

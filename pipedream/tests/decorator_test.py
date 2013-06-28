@@ -65,7 +65,7 @@ def test_decorating_duplicate(dispatcher):
 def test_wrapping_simple(dispatcher):
     @dispatcher.wrap
     def a(b):
-        return '(a={})'.format(b)
+        return '(a={0})'.format(b)
 
     @dispatcher.add
     def b():
@@ -77,7 +77,7 @@ def test_wrapping_simple(dispatcher):
 def test_wrapping_preresolved(dispatcher):
     @dispatcher.wrap
     def a(b):
-        return '(a={})'.format(b)
+        return '(a={0})'.format(b)
 
     @dispatcher.add
     def b():
@@ -88,7 +88,7 @@ def test_wrapping_preresolved(dispatcher):
 def test_wrapping_nothing_available(dispatcher):
     @dispatcher.wrap
     def a(b):
-        return '(a={})'.format(b)
+        return '(a={0})'.format(b)
 
     with pytest.raises(UnresolvableDependency):
         a()

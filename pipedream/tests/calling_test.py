@@ -5,7 +5,7 @@ from pipedream import ResourceError
 def test_calling_basic(dispatcher):
     @dispatcher.add
     def a(b):
-        return '(a={})'.format(b)
+        return '(a={0})'.format(b)
 
     @dispatcher.add
     def b():

@@ -36,7 +36,7 @@ You define dependencies by specifying the name of the function you need as an ar
 
     @dispatcher.add
     def greet(who):
-        return 'Hello {}!'.format(who)
+        return 'Hello {0}!'.format(who)
 
 You can then ask the dispatcher to run any of its functions by name:
 
@@ -87,7 +87,7 @@ If you want to specify the dependencies and use different names within the funct
 
     @dispatcher.add(requires=['a_really_long_name'])
     def medium(long):
-        return '{} is really big!'.format(long)
+        return '{0} is really big!'.format(long)
 
 .. _gevent: http://www.gevent.org/
 .. _ProxyTypes: https://pypi.python.org/pypi/ProxyTypes
