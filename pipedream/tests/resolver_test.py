@@ -1,5 +1,6 @@
 import pytest
 from pipedream import Dispatcher, CircularDependency, UnresolvableDependency
+from pipedream.dispatcher import OrderedDict
 
 
 def add_many(dispatcher, funcs):
@@ -15,8 +16,8 @@ def test_resolving_simple(dispatcher):
         'b': []
     }
     add_many(dispatcher, funcs)
-    assert dispatcher.resolve_dependency_graph('a').keys() == ['b', 'a']
-    assert dispatcher.resolve_dependency_graph('b').keys() == ['b']
+    assert list(dispatcher.resolve_dependency_graph('a').keys()) == ['b', 'a']
+    assert list(dispatcher.resolve_dependency_graph('b').keys()) == ['b']
 
 
 def test_resolving_multi(dispatcher):
@@ -27,10 +28,10 @@ def test_resolving_multi(dispatcher):
         'd': []
     }
     add_many(dispatcher, funcs)
-    assert dispatcher.resolve_dependency_graph('a').keys() == ['d', 'c', 'b', 'a']
-    assert dispatcher.resolve_dependency_graph('b').keys() == ['d', 'c', 'b']
-    assert dispatcher.resolve_dependency_graph('c').keys() == ['d', 'c']
-    assert dispatcher.resolve_dependency_graph('d').keys() == ['d']
+    assert list(dispatcher.resolve_dependency_graph('a').keys()) == ['d', 'c', 'b', 'a']
+    assert list(dispatcher.resolve_dependency_graph('b').keys()) == ['d', 'c', 'b']
+    assert list(dispatcher.resolve_dependency_graph('c').keys()) == ['d', 'c']
+    assert list(dispatcher.resolve_dependency_graph('d').keys()) == ['d']
 
 
 def test_resolving_preresolved(dispatcher):
@@ -42,11 +43,11 @@ def test_resolving_preresolved(dispatcher):
         'e': []
     }
     add_many(dispatcher, funcs)
-    assert dispatcher.resolve_dependency_graph('a', resolved={'b': 'b'}).keys() == ['b', 'd', 'a']
-    assert dispatcher.resolve_dependency_graph('a', resolved={'c': 'c'}).keys() == ['c', 'e', 'b', 'd', 'a']
-    assert dispatcher.resolve_dependency_graph('a', resolved={'b': 'b', 'd': 'd'}).keys() == ['b', 'd', 'a']
-    assert dispatcher.resolve_dependency_graph('b', resolved={'b': 'b'}).keys() == ['b']
-    assert dispatcher.resolve_dependency_graph('b', resolved={'c': 'c'}).keys() == ['c', 'e', 'b']
+    assert list(dispatcher.resolve_dependency_graph('a', resolved={'b': 'b'}).keys()) == ['b', 'd', 'a']
+    assert list(dispatcher.resolve_dependency_graph('a', resolved={'c': 'c'}).keys()) == ['c', 'e', 'b', 'd', 'a']
+    assert list(dispatcher.resolve_dependency_graph('a', resolved=OrderedDict((('b', 'b'), ('d', 'd')))).keys()) == ['b', 'd', 'a']
+    assert list(dispatcher.resolve_dependency_graph('b', resolved={'b': 'b'}).keys()) == ['b']
+    assert list(dispatcher.resolve_dependency_graph('b', resolved={'c': 'c'}).keys()) == ['c', 'e', 'b']
 
 
 def test_resolving_circular(dispatcher):

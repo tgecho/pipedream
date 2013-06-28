@@ -15,7 +15,7 @@ def test_decorating_implicit_requirements(dispatcher):
     def a(b):
         pass  # pragma: no cover
     assert dispatcher.find_resource('a').requirements == ('b',)
-    assert a.func_code.co_varnames == ('b',)
+    assert a.__code__.co_varnames == ('b',)
 
 
 def test_decorating_explicit_requirements(dispatcher):

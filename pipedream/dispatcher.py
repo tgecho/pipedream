@@ -52,7 +52,7 @@ class Dispatcher(object):
         def my_func(var):
             return var
         """
-        if func is None or isinstance(func, basestring):
+        if func is None or not callable(func):
             kwargs.setdefault('name', func)
             def decorater(func):
                 self.add_resource(func, **kwargs)
@@ -86,11 +86,11 @@ class Dispatcher(object):
         try:
             return self._resources[name]
         except KeyError:
-            available = self._resources.keys()
+            available = list(self._resources.keys())
             for dispatcher in (d for d in self._sub_dispatchers if d not in tried):
                 try:
                     return dispatcher.find_resource(name, tried=tried)
-                except UnresolvableDependency, ex:
+                except UnresolvableDependency as ex:
                     available.extend(ex.available)
             raise UnresolvableDependency(name, available=available)
 
@@ -146,7 +146,7 @@ class Dispatcher(object):
     def handle_errors(self, func, *args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except Exception, ex:
+        except Exception as ex:
             for handler in self._error_handlers:
                 result = handler(ex)
                 if not isinstance(result, Exception):

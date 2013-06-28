@@ -8,4 +8,4 @@ def preserve_signature(wrapper, wrapped):
 
 
 def func_kwargs(func):
-    return getattr(func, '_saved_co_varnames', func.func_code.co_varnames[:func.func_code.co_argcount])
+    return getattr(func, '_saved_co_varnames', func.__code__.co_varnames[:func.__code__.co_argcount])

@@ -29,7 +29,7 @@ def break_things():
 def handle_breakage(func):
     try:
         func()
-    except ZeroDivisionError, exc:
+    except ZeroDivisionError as exc:
         return exc
 
 
