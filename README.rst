@@ -3,7 +3,7 @@ Pipedream
 =========
 Flow based programming library
 ==============================
-.. image:: https://travis-ci.org/tgecho/pipedream.png?branch=master
+|travis|
 
 Pipedream is a lightweight library that helps organize Python software around concepts inspired by flow based programming. It allows you to define the dependencies between a number of loosely related resources declaratively and then uses this information to coordinate the control flow.
 
@@ -89,6 +89,10 @@ If you want to specify the dependencies and use different names within the funct
     @dispatcher.add(requires=['a_really_long_name'])
     def medium(long):
         return '{0} is really big!'.format(long)
+
+.. |travis| image:: https://travis-ci.org/tgecho/pipedream.png?branch=master
+        :target: https://travis-ci.org/tgecho/pipedream
+
 
 .. _gevent: http://www.gevent.org/
 .. _ProxyTypes: https://pypi.python.org/pypi/ProxyTypes
